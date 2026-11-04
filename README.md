@@ -4,7 +4,7 @@ A planned lightweight reference weather application for Android and iOS.
 
 ## Current Status
 
-The minimal Expo SDK 58 project foundation has been initialized with React Native and strict TypeScript. The application currently renders an intentionally empty root view. No weather functionality, NativeWind configuration, navigation, or additional feature dependency has been added yet.
+The Expo SDK 58 foundation includes a styled static Home screen, a Settings placeholder screen, bottom-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons. Weather data fetching is not implemented yet.
 
 Further implementation should proceed only through explicit user requests.
 
@@ -18,7 +18,10 @@ The project is intended to demonstrate a small, maintainable cross-platform weat
 - React Native 0.88
 - React 19.3
 - TypeScript 6 in strict mode
-- NativeWind and a compatible Tailwind CSS version are planned but not installed
+- NativeWind 4.2 with Tailwind CSS 3.4
+- Inter through Expo Font
+- Expo Vector Icons with Ionicons
+- React Navigation 7 with bottom tabs
 - Native `fetch`
 - npm with `package-lock.json`
 - Open-Meteo public API
@@ -44,6 +47,17 @@ Authentication, accounts, notifications, GPS permissions, databases, persistent 
 ```text
 weather-app/
 ├── assets/
+├── components/
+│   ├── global/
+│   │   ├── AppCard/
+│   │   ├── AppScreen/
+│   │   └── AppText/
+├── constants/
+├── navigation/
+│   └── AppTabs.tsx
+├── screens/
+│   ├── home/
+│   └── settings/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── DEVELOPMENT.md
@@ -53,10 +67,15 @@ weather-app/
 ├── AGENTS.md
 ├── App.tsx
 ├── app.json
+├── babel.config.js
+├── global.css
 ├── index.ts
+├── metro.config.js
+├── nativewind-env.d.ts
 ├── package.json
 ├── package-lock.json
 ├── README.md
+├── tailwind.config.js
 └── tsconfig.json
 ```
 
@@ -77,16 +96,17 @@ The planned provider is the [Open-Meteo API](https://open-meteo.com/en/docs). Us
 
 ## Platform Testing
 
-- Android runtime testing has not been performed yet.
+- The Android production-style JavaScript bundle has been generated successfully.
+- Expo found the running `Medium_Phone_API_36.1` emulator, but Expo Go installation was blocked because the emulator had insufficient internal storage.
 - iOS runtime testing has not been performed yet.
 - The future initial workflow should use Expo Go when supported by the final dependency set.
 - Native `android/` and `ios/` directories are not required for normal Expo-managed development and must not be generated without an approved need.
 
 ## Known Limitations
 
-- The root application view is intentionally empty.
-- No weather interface or API integration has been implemented.
-- NativeWind is not installed or configured.
-- npm reported eight transitive dependency audit findings during initialization: five low and three high severity findings. No automatic audit fix was applied.
-- No Android or iOS runtime validation has been performed.
+- The Home screen is static and does not fetch weather data.
+- Settings actions are visual placeholders and intentionally disabled.
+- npm currently reports nine transitive dependency audit findings: one low, six moderate, and two high severity findings. No automatic audit fix was applied.
+- Android on-device rendering remains unverified until Expo Go can be installed on an emulator with sufficient storage.
+- iOS runtime validation has not been performed.
 

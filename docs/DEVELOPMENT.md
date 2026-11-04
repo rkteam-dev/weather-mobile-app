@@ -10,7 +10,7 @@
 
 ## Initialization Record
 
-The project was initialized from the official `blank-typescript@sdk-58` Expo template and reduced to an empty root view. Existing documentation and project rules were preserved. No `android/` or `ios/` directories were generated.
+The project was initialized from the official `blank-typescript@sdk-58` Expo template. NativeWind, shared UI components, and a static Home screen have since been added. No `android/` or `ios/` directories were generated.
 
 ## Development Commands
 
@@ -29,7 +29,17 @@ The project was initialized from the official `blank-typescript@sdk-58` Expo tem
 
 ## Android Testing
 
-Android Studio is available for later emulator testing. After implementation, document the verified emulator workflow, device prerequisites, and any environment-specific limitations.
+Configured local virtual devices include `Medium_Phone_API_36.1`, `Pixel_7_Pro`, and `Small_Phone`.
+
+1. Open Android Studio.
+2. Open **More Actions > Virtual Device Manager**, or **Tools > Device Manager** from an open project.
+3. Start an emulator with the play button and wait for the Android Home screen.
+4. From the repository root, run `npm run android`.
+5. Expo starts Metro, installs or opens Expo Go, and loads the application.
+
+If Expo Go installation reports insufficient internal storage, stop the emulator and use **Wipe Data** from the device's overflow menu in Device Manager. This deletes only that virtual device's installed apps and local data. Alternatively, create or start another AVD with more internal storage.
+
+The current `Medium_Phone_API_36.1` device was detected by ADB, but its `/data` partition was 92% full with about 502 MB available, which prevented Expo Go installation.
 
 ## iOS Testing
 

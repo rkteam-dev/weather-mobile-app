@@ -2,7 +2,7 @@
 
 ## Status
 
-The repository currently contains only the minimal Expo entry point and an empty root view. The feature architecture below remains proposed until weather implementation begins.
+The repository contains a minimal Expo entry point, Home and Settings screens, bottom-tab navigation, and the first shared UI contracts. Weather service and state layers remain deferred until data integration begins.
 
 ## Architectural Goals
 
@@ -16,13 +16,25 @@ The repository currently contains only the minimal Expo entry point and an empty
 
 ### Application Entry
 
-`App.tsx` should compose the initial screen and global styling entry points. It should not contain API parsing or complex business logic.
+`App.tsx` imports global styles, loads the approved Inter font weights, owns the splash-screen transition, provides safe-area context, and composes `AppTabs`. It must not contain API parsing or feature business logic.
 
 ### Global Components
 
-`components/global/` should contain only reusable application-wide UI contracts that are actually used, such as a screen container or repeated asynchronous state presentation.
+`components/global/` currently contains `AppScreen`, `AppText`, and `AppCard`. These establish shared safe-area, spacing, typography, and card contracts.
 
 Global components should not contain weather-specific knowledge.
+
+### Home Feature
+
+`screens/home/HomeScreen.tsx` contains the current static welcome experience. Screen-specific copy remains directly in the screen for readability.
+
+### Navigation
+
+`navigation/AppTabs.tsx` owns the typed Home and Settings bottom tabs. Navigation configuration stays separate because it is an application-level responsibility.
+
+### Settings Screen
+
+`screens/settings/SettingsScreen.tsx` contains the current visual placeholders for website, social media, privacy, support, application information, and data deletion actions. The controls are intentionally disabled until their behavior is implemented.
 
 ## State and Data Flow
 

@@ -13,7 +13,7 @@
 
 - Communicate with the user exclusively in Hungarian.
 - Write source code, comments, identifiers, file names, documentation, Git titles, and Git messages in English.
-- Keep user-facing application strings centralized for future localization.
+- Keep screen-specific text close to the screen that uses it. Extract text only when it is reused, localization is implemented, or a clear maintenance benefit exists.
 - The initial application language may be English.
 - Explain decisions, verified errors, potential risks, warnings, and recommendations to the user in Hungarian.
 
@@ -45,6 +45,8 @@
 
 - Apply SOLID pragmatically, with focused responsibilities and clear contracts.
 - Follow KISS: prefer the simplest maintainable implementation.
+- Optimize for readability and directness. Do not split simple screen content, constants, or components into extra files without a concrete benefit.
+- Avoid indirection that forces readers to jump between files for one-off values or copy.
 - Follow DRY for business logic, API handling, design tokens, and repeated UI behavior, but avoid premature abstractions.
 - Follow YAGNI: do not implement infrastructure or features that are not currently required.
 - Prefer composition over inheritance, explicit behavior over implicit magic, and readability over cleverness.
@@ -69,7 +71,7 @@
 - Place application-wide reusable UI components in `components/global/`.
 - Place weather-specific UI components in `components/weather/`.
 - Keep weather hooks in `hooks/weather/`, API access in `services/weather/`, and domain contracts in `types/weather/` when those layers are introduced.
-- Keep shared constants, including theme tokens and UI strings, in `constants/`.
+- Keep genuinely shared constants, such as theme tokens, in `constants/`. Keep one-off screen copy in its screen file.
 - Keep project documentation in `docs/` and synchronized with actual implementation.
 - Do not create empty architecture, database, navigation, or route layers in anticipation of future needs.
 - Use PascalCase component names, prefer named exports for reusable components, and generally keep one main component per file.

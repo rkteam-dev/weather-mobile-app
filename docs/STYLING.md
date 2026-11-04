@@ -2,28 +2,37 @@
 
 ## Status
 
-These guidelines describe the intended styling approach.
+NativeWind 4.2.7 and Tailwind CSS 3.4 are configured and used by the current Home screen.
 
 ## Primary Approach
 
-- Use NativeWind as the primary styling solution after implementation is authorized.
-- Select NativeWind, Tailwind CSS, Expo, React Native, Babel, and Metro configurations from mutually compatible official guidance.
-- Use the officially supported root-level `global.css` setup for the selected NativeWind version.
+- Use NativeWind as the primary styling solution.
+- `global.css` contains the Tailwind base, component, and utility directives.
+- `babel.config.js` enables the NativeWind JSX transform.
+- `metro.config.js` passes `global.css` through NativeWind.
+- `tailwind.config.js` scans `App.tsx`, `components/`, and `constants/`.
 
 ## Design Tokens
 
-The future design system should define a compact semantic token set for:
+The initial semantic tokens are defined in `tailwind.config.js` and mirrored for native API usage in `constants/theme.ts`:
 
-- Surface and background colors
-- Primary and secondary text colors
-- Accent and status colors
-- Spacing
-- Border radius
-- Typography
-- Common component sizes
-- Light and dark appearance when implemented
+- Primary: `#4F7CFF`
+- Primary dark: `#315BD9`
+- Secondary: `#12213A`
+- Background: `#F4F7FC`
+- Surface: `#FFFFFF`
+- Muted text: `#64748B`
+- Border: `#E2E8F0`
+- Danger: `#DC4C64`
+- Inner container padding: `20px` through `p-inner` or `px-inner`
+- Section spacing: `60px` through `gap-section`
+- Card radius: `28px` through `rounded-card`
 
-Tokens should have semantic names and one clear source of truth. Avoid a large speculative token catalog before the interface requires it.
+Keep the two configuration representations synchronized when a shared token changes. Dark appearance is not implemented yet.
+
+## Typography
+
+Inter is loaded at runtime through Expo Font so it remains compatible with Expo Go. The application currently loads Regular 400, Medium 500, SemiBold 600, and Bold 700 only. Use `AppText` rather than raw `Text` for application copy so the correct family, size, and line height are applied consistently.
 
 ## Component Rules
 
@@ -34,6 +43,8 @@ Tokens should have semantic names and one clear source of truth. Avoid a large s
 - Keep weather-specific visual decisions in weather components.
 - Support reasonable font scaling and avoid fixed heights that clip text.
 - Use touch targets appropriate for both Android and iOS.
+- Use `AppScreen` for safe-area handling, scrolling, the global background, 20px horizontal padding, and 60px section spacing.
+- Use `AppCard` for the shared card radius and inner padding.
 
 ## Exceptions to NativeWind
 
