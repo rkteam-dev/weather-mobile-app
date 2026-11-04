@@ -1,18 +1,22 @@
 import type { ReactNode } from 'react';
+import { useColorScheme } from 'nativewind';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { theme } from '../../../constants/theme';
+import { getThemeColors } from '../../../constants/theme';
 
 type AppScreenProps = {
   children: ReactNode;
 };
 
 export function AppScreen({ children }: AppScreenProps) {
+  const { colorScheme } = useColorScheme();
+  const colors = getThemeColors(colorScheme);
+
   return (
     <SafeAreaView
       edges={['top', 'right', 'left']}
-      style={{ flex: 1, backgroundColor: theme.colors.background }}
+      style={{ flex: 1, backgroundColor: colors.background }}
     >
       <ScrollView
         className="flex-1"

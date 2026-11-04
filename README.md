@@ -4,7 +4,7 @@ A planned lightweight reference weather application for Android and iOS.
 
 ## Current Status
 
-The Expo SDK 58 foundation includes a styled static Home screen, a Settings placeholder screen, bottom-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons. Weather data fetching is not implemented yet.
+The Expo SDK 58 foundation includes a styled static Home screen, a visual saved-city manager, a Settings screen with a working light/dark theme toggle, three-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons. Weather data fetching is not implemented yet.
 
 Further implementation should proceed only through explicit user requests.
 
@@ -50,20 +50,25 @@ weather-app/
 ├── components/
 │   ├── global/
 │   │   ├── AppCard/
+│   │   ├── AppNoticeModal/
 │   │   ├── AppScreen/
 │   │   └── AppText/
 ├── constants/
 ├── navigation/
 │   └── AppTabs.tsx
 ├── screens/
+│   ├── cities/
 │   ├── home/
 │   └── settings/
+├── types/
+│   └── weather/
 ├── docs/
 │   ├── ARCHITECTURE.md
 │   ├── DEVELOPMENT.md
 │   ├── PLATFORM_GUIDELINES.md
 │   ├── REQUIREMENTS.md
-│   └── STYLING.md
+│   ├── STYLING.md
+│   └── WEATHER_API.md
 ├── AGENTS.md
 ├── App.tsx
 ├── app.json
@@ -97,7 +102,7 @@ The planned provider is the [Open-Meteo API](https://open-meteo.com/en/docs). Us
 ## Platform Testing
 
 - The Android production-style JavaScript bundle has been generated successfully.
-- Expo found the running `Medium_Phone_API_36.1` emulator, but Expo Go installation was blocked because the emulator had insufficient internal storage.
+- Android emulator rendering and the theme toggle have been confirmed by the user.
 - iOS runtime testing has not been performed yet.
 - The future initial workflow should use Expo Go when supported by the final dependency set.
 - Native `android/` and `ios/` directories are not required for normal Expo-managed development and must not be generated without an approved need.
@@ -105,8 +110,10 @@ The planned provider is the [Open-Meteo API](https://open-meteo.com/en/docs). Us
 ## Known Limitations
 
 - The Home screen is static and does not fetch weather data.
+- City search and weather values are mock data until Open-Meteo integration is implemented.
+- Saved-city changes are currently in memory only.
 - Settings actions are visual placeholders and intentionally disabled.
+- The selected theme is currently kept in memory and resets when the application restarts.
 - npm currently reports nine transitive dependency audit findings: one low, six moderate, and two high severity findings. No automatic audit fix was applied.
-- Android on-device rendering remains unverified until Expo Go can be installed on an emulator with sufficient storage.
 - iOS runtime validation has not been performed.
 

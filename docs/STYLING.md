@@ -24,11 +24,33 @@ The initial semantic tokens are defined in `tailwind.config.js` and mirrored for
 - Muted text: `#64748B`
 - Border: `#E2E8F0`
 - Danger: `#DC4C64`
+- Warning: `#D98B00`
 - Inner container padding: `20px` through `p-inner` or `px-inner`
 - Section spacing: `60px` through `gap-section`
 - Card radius: `28px` through `rounded-card`
 
-Keep the two configuration representations synchronized when a shared token changes. Dark appearance is not implemented yet.
+The dark palette uses:
+
+- Background: `#0B1220`
+- Surface: `#152238`
+- Primary: `#7EA2FF`
+- Secondary text: `#F3F6FF`
+- Muted text: `#9CAAC2`
+- Border: `#283A56`
+- Danger: `#FF7A90`
+- Warning: `#FFC857`
+
+Keep the Tailwind and TypeScript token representations synchronized when a shared color changes.
+
+## Color Scheme
+
+NativeWind is configured with the class-based dark-mode strategy. The Settings screen changes the active scheme through NativeWind's `setColorScheme` API. Every semantic light class must have an explicit `dark:` counterpart where its light color would not remain readable.
+
+The current selection is in memory only. Do not introduce a persistence dependency until persistent settings are explicitly requested.
+
+Every new or modified interface element must be reviewed in both light and dark themes. A UI task is not complete if text, icons, borders, surfaces, pressed states, or navigation chrome work in only one appearance.
+
+When persistence is implemented, use a React Native-compatible storage API instead of browser `localStorage`.
 
 ## Typography
 

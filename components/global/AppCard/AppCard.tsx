@@ -10,8 +10,9 @@ type AppCardProps = ViewProps & {
 };
 
 const variantClasses: Record<AppCardVariant, string> = {
-  default: 'border border-border bg-surface',
-  primary: 'bg-primary',
+  default:
+    'border border-border bg-surface dark:border-dark-border dark:bg-dark-surface',
+  primary: 'bg-primary dark:bg-dark-primary-dark',
 };
 
 export function AppCard({

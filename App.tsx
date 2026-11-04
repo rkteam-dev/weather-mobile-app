@@ -8,6 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
+import { useColorScheme } from 'nativewind';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppTabs } from './navigation/AppTabs';
@@ -17,6 +18,7 @@ void SplashScreen.preventAutoHideAsync().catch((error: unknown) => {
 });
 
 export default function App() {
+  const { colorScheme } = useColorScheme();
   const [fontsLoaded, fontError] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -42,7 +44,7 @@ export default function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar style='dark' />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <AppTabs />
     </SafeAreaProvider>
   );

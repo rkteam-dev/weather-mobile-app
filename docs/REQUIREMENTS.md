@@ -41,9 +41,11 @@ The initial implementation must not include:
 
 These capabilities may be considered only in a later explicitly authorized task.
 
+The interface may manage up to three manually selected cities without GPS. Until API integration and persistence are explicitly implemented, city search and weather values remain local mock state.
+
 ## Data Source
 
-- Consider using the public Open-Meteo API, the api must be free.
+- Use the public Open-Meteo Geocoding and Forecast APIs.
 - Use native `fetch` for requests.
 - Confirm current endpoint fields, usage limits, licensing, attribution, and API requirements before implementation.
 - Keep transport response types separate from application domain models.

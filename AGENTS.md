@@ -81,6 +81,9 @@
 ## Styling Rules
 
 - Use NativeWind `className` utilities for standard layout and styling after NativeWind is configured.
+- Design and review every new or modified UI element in both light and dark themes.
+- Add explicit semantic dark-theme colors whenever a light-theme color would not remain readable or visually consistent.
+- Treat missing dark-theme behavior as an incomplete UI change.
 - Use the official setup for the selected NativeWind version, including root-level `global.css` when required.
 - Centralize colors, spacing, typography, radii, and component sizes as design tokens.
 - Avoid scattered arbitrary hardcoded values.
@@ -116,7 +119,9 @@
 - Map external data into typed application models and handle missing or unexpected values safely.
 - Implement explicit errors and request timeout or cancellation where appropriate.
 - Avoid duplicate requests and do not add a caching library initially.
-- Do not add authentication, accounts, notifications, GPS permissions, databases, persistent favorites, or a custom backend unless explicitly requested.
+- Do not add authentication, accounts, notifications, GPS permissions, databases, or a custom backend unless explicitly requested.
+- Saved cities are manually selected without GPS and are limited to three. Persistence and live search remain deferred until explicitly requested.
+- When theme or favorite-city persistence is requested, use a React Native-compatible storage solution rather than browser `localStorage`, and obtain approval before adding its dependency.
 - Review API usage limits, licensing, attribution, and requirements before implementation.
 
 ## Async UI and Error Handling

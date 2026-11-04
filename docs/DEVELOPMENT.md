@@ -39,7 +39,7 @@ Configured local virtual devices include `Medium_Phone_API_36.1`, `Pixel_7_Pro`,
 
 If Expo Go installation reports insufficient internal storage, stop the emulator and use **Wipe Data** from the device's overflow menu in Device Manager. This deletes only that virtual device's installed apps and local data. Alternatively, create or start another AVD with more internal storage.
 
-The current `Medium_Phone_API_36.1` device was detected by ADB, but its `/data` partition was 92% full with about 502 MB available, which prevented Expo Go installation.
+An earlier `Medium_Phone_API_36.1` run was blocked when its `/data` partition was 92% full. Android emulator rendering was subsequently confirmed by the user.
 
 ## iOS Testing
 
