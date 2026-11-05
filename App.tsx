@@ -11,6 +11,7 @@ import { useEffect } from 'react';
 import { useColorScheme } from 'nativewind';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { WeatherProvider } from './context/weather/WeatherContext';
 import { AppTabs } from './navigation/AppTabs';
 
 void SplashScreen.preventAutoHideAsync().catch((error: unknown) => {
@@ -45,7 +46,9 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
-      <AppTabs />
+      <WeatherProvider>
+        <AppTabs />
+      </WeatherProvider>
     </SafeAreaProvider>
   );
 }

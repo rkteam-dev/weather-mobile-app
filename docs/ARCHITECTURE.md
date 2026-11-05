@@ -2,7 +2,7 @@
 
 ## Status
 
-The repository contains a minimal Expo entry point, Home, Cities, and Settings screens, bottom-tab navigation, and the first shared UI contracts. Weather service and remote state layers remain deferred until data integration begins.
+The repository contains a minimal Expo entry point, Home, Cities, and Settings screens, bottom-tab navigation, shared UI contracts, live city search, and shared current-weather state for up to three cities.
 
 ## Architectural Goals
 
@@ -26,7 +26,11 @@ Global components should not contain weather-specific knowledge.
 
 ### Home Feature
 
-`screens/home/HomeScreen.tsx` contains the current static welcome experience and a visual saved-city selector with Miskolc as its placeholder selection. Screen-specific copy remains directly in the screen for readability. The selector has no interaction or persistence yet; future saved-city support is limited to three manually chosen cities and does not require GPS.
+`screens/home/HomeScreen.tsx` presents live current weather for the selected saved city. Its modal selector switches between the cities held by shared weather state and reuses their already loaded values. It renders loading, error, retry, refresh, success, and stale-data states. Screen-specific copy remains directly in the screen for readability.
+
+### Weather Data
+
+`services/weather/openMeteo.ts` owns Open-Meteo geocoding and current-weather requests, runtime response validation, WMO condition mapping, and conversion into application models. `context/weather/WeatherContext.tsx` owns saved locations, Home selection, shared weather values, request cancellation, timeout, retry, refresh, and last successful update time. Presentational components do not call the API directly.
 
 ### Navigation
 
@@ -34,9 +38,9 @@ Global components should not contain weather-specific knowledge.
 
 ### Cities Screen
 
-`screens/cities/CitiesScreen.tsx` presents up to three locally managed mock cities. Cards show the fields expected from the future API model: temperature, condition, precipitation, day/night state, timezone, and local time. Deletion works in memory. Search and remote addition are intentionally not implemented yet.
+`screens/cities/CitiesScreen.tsx` searches Open-Meteo locations and manages up to three cities in memory. Cards show live temperature, condition, precipitation, day/night state, timezone-based local time, retry, and manual refresh. The last remaining city cannot be deleted because Home always requires a selected city.
 
-`types/weather/weather.ts` defines the small application-facing city weather model. Future Open-Meteo transport responses must be validated and mapped into this model instead of being passed directly to the UI.
+`types/weather/weather.ts` defines the small application-facing location and weather models. Open-Meteo transport responses are validated and mapped into these models instead of being passed directly to the UI.
 
 ### Settings Screen
 
@@ -48,8 +52,8 @@ NativeWind's color scheme API owns the current in-memory light or dark selection
 
 ## State and Data Flow
 
-- Use local React state and built-in hooks for the initial single-screen application.
-- Introduce Context only if state must genuinely be shared across distant consumers.
+- Use local React state for screen-only interaction.
+- A small React Context shares saved locations, selected city, and weather state between Home and Cities.
 - Do not introduce a third-party state or server-state library initially.
 - Never render missing values as if they were valid weather measurements.
 

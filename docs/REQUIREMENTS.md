@@ -2,7 +2,7 @@
 
 ## Status
 
-This document records the approved planning constraints. It does not indicate that any feature has been implemented.
+This document records the approved product constraints. Live city search, in-memory management of up to three cities, selected-city switching, and current weather are implemented. Persistence is not.
 
 ## Product Goal
 
@@ -41,7 +41,7 @@ The initial implementation must not include:
 
 These capabilities may be considered only in a later explicitly authorized task.
 
-The interface may manage up to three manually selected cities without GPS. Until API integration and persistence are explicitly implemented, city search and weather values remain local mock state.
+The interface manages up to three manually selected cities without GPS. The Home screen uses the selected saved city's shared live weather. Saved cities and selection remain in memory until persistence is explicitly implemented.
 
 ## Data Source
 

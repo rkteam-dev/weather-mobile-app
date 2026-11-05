@@ -21,6 +21,7 @@ export function AppScreen({ children }: AppScreenProps) {
       <ScrollView
         className="flex-1"
         contentInsetAdjustmentBehavior="automatic"
+        keyboardShouldPersistTaps="handled"
         showsVerticalScrollIndicator={false}
       >
         <View className="gap-section px-inner pb-content-bottom pt-3">

@@ -4,7 +4,7 @@ A planned lightweight reference weather application for Android and iOS.
 
 ## Current Status
 
-The Expo SDK 58 foundation includes a styled static Home screen, a visual saved-city manager, a Settings screen with a working light/dark theme toggle, three-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons. Weather data fetching is not implemented yet.
+The Expo SDK 58 application includes Open-Meteo city search, live weather for up to three in-memory saved cities, a selectable Home city, a Settings screen with a working light/dark theme toggle, three-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons.
 
 Further implementation should proceed only through explicit user requests.
 
@@ -54,12 +54,16 @@ weather-app/
 │   │   ├── AppScreen/
 │   │   └── AppText/
 ├── constants/
+├── context/
+│   └── weather/
 ├── navigation/
 │   └── AppTabs.tsx
 ├── screens/
 │   ├── cities/
 │   ├── home/
 │   └── settings/
+├── services/
+│   └── weather/
 ├── types/
 │   └── weather/
 ├── docs/
@@ -97,7 +101,7 @@ Install dependencies with `npm install` after cloning the repository. Available 
 
 ## API
 
-The planned provider is the [Open-Meteo API](https://open-meteo.com/en/docs). Usage terms, attribution, endpoint fields, and response mapping must be reviewed against the current official documentation before implementation.
+The Home screen uses the public [Open-Meteo API](https://open-meteo.com/en/docs) through native `fetch`. The free non-commercial endpoint requires no account or API key. Open-Meteo attribution is displayed in the interface. Commercial usage requires a suitable paid plan.
 
 ## Platform Testing
 
@@ -109,8 +113,7 @@ The planned provider is the [Open-Meteo API](https://open-meteo.com/en/docs). Us
 
 ## Known Limitations
 
-- The Home screen is static and does not fetch weather data.
-- City search and weather values are mock data until Open-Meteo integration is implemented.
+- Saved cities and the selected Home city reset when the application restarts.
 - Saved-city changes are currently in memory only.
 - Settings actions are visual placeholders and intentionally disabled.
 - The selected theme is currently kept in memory and resets when the application restarts.

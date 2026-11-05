@@ -10,7 +10,7 @@
 
 ## Initialization Record
 
-The project was initialized from the official `blank-typescript@sdk-58` Expo template. NativeWind, shared UI components, and a static Home screen have since been added. No `android/` or `ios/` directories were generated.
+The project was initialized from the official `blank-typescript@sdk-58` Expo template. NativeWind, shared UI components, Open-Meteo city search, and shared live weather state have since been added. No `android/` or `ios/` directories were generated.
 
 ## Development Commands
 
