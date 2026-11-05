@@ -1,122 +1,103 @@
 # Weather App
 
-A planned lightweight reference weather application for Android and iOS.
+A small cross-platform weather application built as a React Native reference project. It focuses on a clean interface, readable code, explicit asynchronous states, and consistent behavior on Android and iOS.
 
-## Current Status
+## Features
 
-The Expo SDK 58 application includes Open-Meteo city search, live weather for up to three in-memory saved cities, a selectable Home city, a Settings screen with a working light/dark theme toggle, three-tab navigation, shared global UI components, NativeWind, safe-area handling, Inter typography, and Ionicons.
+- Search cities through the Open-Meteo Geocoding API
+- Save up to three cities without GPS access
+- Display live temperature, apparent temperature, humidity, wind, precipitation, weather condition, and day/night state
+- Select which saved city appears on the Home screen
+- Refresh weather data manually
+- Handle loading, timeout, network error, retry, and stale-data states
+- Switch between light and dark themes
+- Use accessible controls, safe areas, and responsive layouts
 
-Further implementation should proceed only through explicit user requests.
+Saved cities, the selected city, and the chosen theme currently remain in memory and reset when the application restarts.
 
-## Planned Purpose
-
-The project is intended to demonstrate a small, maintainable cross-platform weather application with predictable behavior, clear separation of responsibilities, reusable UI patterns, and concise developer documentation.
-
-## Technology Stack
+## Technology
 
 - Expo SDK 58
 - React Native 0.88
 - React 19.3
-- TypeScript 6 in strict mode
-- NativeWind 4.2 with Tailwind CSS 3.4
-- Inter through Expo Font
-- Expo Vector Icons with Ionicons
-- React Navigation 7 with bottom tabs
+- TypeScript 6 with strict mode
+- NativeWind 4 and Tailwind CSS 3
+- React Navigation 7
+- Inter font and Ionicons
 - Native `fetch`
-- npm with `package-lock.json`
-- Open-Meteo public API
+- Open-Meteo Geocoding and Forecast APIs
 
-Installed versions are pinned through `package-lock.json`. Future dependency versions must be selected from current official compatibility guidance.
+## Getting Started
 
-## Planned Initial Scope
+### Requirements
 
-- Weather for one predefined location
-- Current temperature
-- City name
-- Weather condition and human-readable description
-- Basic available weather details
-- Initial loading and refresh states
-- Explicit network error and retry behavior
-- Manual refresh
-- Last successful update time
+- Node.js and npm
+- Expo Go on a physical device, or Android Studio with an Android emulator
+- Xcode and the iOS Simulator when testing locally on macOS
 
-Authentication, accounts, notifications, GPS permissions, databases, persistent favorites, and a custom backend are outside the initial scope.
+### Installation
 
-## Repository Contents
-
-```text
-weather-app/
-├── assets/
-├── components/
-│   ├── global/
-│   │   ├── AppCard/
-│   │   ├── AppNoticeModal/
-│   │   ├── AppScreen/
-│   │   └── AppText/
-├── constants/
-├── context/
-│   └── weather/
-├── navigation/
-│   └── AppTabs.tsx
-├── screens/
-│   ├── cities/
-│   ├── home/
-│   └── settings/
-├── services/
-│   └── weather/
-├── types/
-│   └── weather/
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── DEVELOPMENT.md
-│   ├── PLATFORM_GUIDELINES.md
-│   ├── REQUIREMENTS.md
-│   ├── STYLING.md
-│   └── WEATHER_API.md
-├── AGENTS.md
-├── App.tsx
-├── app.json
-├── babel.config.js
-├── global.css
-├── index.ts
-├── metro.config.js
-├── nativewind-env.d.ts
-├── package.json
-├── package-lock.json
-├── README.md
-├── tailwind.config.js
-└── tsconfig.json
+```bash
+git clone https://github.com/rkteam-dev/weather-mobile-app.git
+cd weather-mobile-app
+npm install
 ```
 
-Generated dependency files under `node_modules/` are omitted from the tree.
+### Run the application
 
-## Installation and Commands
+Start the Expo development server:
 
-Install dependencies with `npm install` after cloning the repository. Available commands:
+```bash
+npm start
+```
 
-- `npm start` starts the Expo development server.
-- `npm run android` starts Expo and targets an available Android device or emulator.
-- `npm run ios` starts Expo and targets an available iOS environment.
-- `npm run web` starts Expo for the web target. Web-specific runtime packages have not been added or validated.
+Other available commands:
 
-## API
+```bash
+npm run android
+npm run ios
+```
 
-The Home screen uses the public [Open-Meteo API](https://open-meteo.com/en/docs) through native `fetch`. The free non-commercial endpoint requires no account or API key. Open-Meteo attribution is displayed in the interface. Commercial usage requires a suitable paid plan.
+`npm run ios` requires macOS for the local iOS Simulator. On Windows, iOS can be tested with Expo Go on a physical iPhone.
 
-## Platform Testing
+## Project Structure
 
-- The Android production-style JavaScript bundle has been generated successfully.
-- Android emulator rendering and the theme toggle have been confirmed by the user.
-- iOS runtime testing has not been performed yet.
-- The future initial workflow should use Expo Go when supported by the final dependency set.
-- Native `android/` and `ios/` directories are not required for normal Expo-managed development and must not be generated without an approved need.
+```text
+components/   Shared UI components
+constants/    Theme tokens and predefined locations
+context/      Shared saved-city and weather state
+navigation/   Bottom-tab navigation
+screens/      Home, Cities, and Settings screens
+services/     Open-Meteo API requests and response mapping
+types/        Weather domain models
+docs/         Technical and product documentation
+```
 
-## Known Limitations
+The API layer validates external responses before mapping them into application models. Screens do not call weather endpoints directly. A small React Context shares saved cities, selected-city state, and loaded weather values without introducing an additional state-management library.
 
-- Saved cities and the selected Home city reset when the application restarts.
-- Saved-city changes are currently in memory only.
-- Settings actions are visual placeholders and intentionally disabled.
-- The selected theme is currently kept in memory and resets when the application restarts.
-- npm currently reports nine transitive dependency audit findings: one low, six moderate, and two high severity findings. No automatic audit fix was applied.
-- iOS runtime validation has not been performed.
+## Weather Data
 
+Weather and location data are provided by [Open-Meteo](https://open-meteo.com/). The free public endpoints require no API key for non-commercial use. Open-Meteo data is licensed under CC BY 4.0 and requires attribution.
+
+See [Weather API documentation](docs/WEATHER_API.md) for request fields, mapping, limits, and error handling.
+
+## Current Limitations
+
+- Saved cities and theme selection are not persisted
+- Settings actions are visual placeholders
+- GPS-based location is not implemented
+- Automated tests have not been introduced yet
+- Android has been manually exercised, while iOS runtime testing is still pending
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Development](docs/DEVELOPMENT.md)
+- [Product requirements](docs/REQUIREMENTS.md)
+- [Styling system](docs/STYLING.md)
+- [Platform guidelines](docs/PLATFORM_GUIDELINES.md)
+- [Weather API](docs/WEATHER_API.md)
+
+## Validation
+
+The project is currently validated with TypeScript checks, Expo configuration checks, Android Hermes bundling, and manual runtime testing. Platform checks are only reported as completed when they have actually been performed.

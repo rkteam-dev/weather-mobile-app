@@ -94,7 +94,7 @@ export function HomeScreen() {
             className='text-secondary dark:text-dark-secondary'
             variant='hero'
           >
-            Üdvözöllek, David!
+            Üdvözöllek!
           </AppText>
           <AppText className='max-w-[340px] text-muted dark:text-dark-muted'>
             Nézd meg, milyen idő van most {selectedCity.name} városában.
@@ -147,7 +147,9 @@ export function HomeScreen() {
 
               <View className='h-16 w-16 items-center justify-center rounded-full bg-white/15'>
                 <Ionicons
-                  color={data.condition === 'clear-day' ? colors.sun : '#FFFFFF'}
+                  color={
+                    data.condition === 'clear-day' ? colors.sun : '#FFFFFF'
+                  }
                   name={iconByCondition[data.condition]}
                   size={34}
                 />
@@ -216,7 +218,9 @@ export function HomeScreen() {
 
             <AppCard className='min-w-[46%] flex-1 gap-3'>
               <Ionicons color={colors.primary} name='leaf-outline' size={22} />
-              <AppText className='text-muted dark:text-dark-muted'>Szél</AppText>
+              <AppText className='text-muted dark:text-dark-muted'>
+                Szél
+              </AppText>
               <AppText
                 className='text-secondary dark:text-dark-secondary'
                 variant='heading'
@@ -323,7 +327,11 @@ export function HomeScreen() {
                       setIsCityPickerVisible(false);
                     }}
                   >
-                    <Ionicons color={colors.primary} name='location' size={21} />
+                    <Ionicons
+                      color={colors.primary}
+                      name='location'
+                      size={21}
+                    />
                     <View className='flex-1'>
                       <AppText
                         className='text-secondary dark:text-dark-secondary'
