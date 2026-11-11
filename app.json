@@ -24,7 +24,13 @@
     },
     "plugins": [
       "expo-font",
-      "expo-splash-screen"
+      "expo-splash-screen",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "A Weather App a tartózkodási helyed alapján azonosítja a városodat és mutatja az időjárást."
+        }
+      ]
     ]
   }
 }

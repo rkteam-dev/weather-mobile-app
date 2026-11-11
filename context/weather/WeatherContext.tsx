@@ -21,12 +21,15 @@ const REQUEST_TIMEOUT_MS = 10_000;
 
 type WeatherContextValue = {
   addCity: (location: WeatherLocation) => void;
+  availableCities: WeatherLocation[];
+  deviceLocation: WeatherLocation | null;
   isSaved: (locationId: string) => boolean;
   refreshCity: (location: WeatherLocation) => Promise<void>;
   removeCity: (locationId: string) => void;
   savedCities: WeatherLocation[];
   selectCity: (locationId: string) => void;
   selectedCity: WeatherLocation;
+  updateDeviceLocation: (location: WeatherLocation) => void;
   weatherByCityId: Record<string, CityWeatherState>;
 };
 
@@ -45,6 +48,8 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     MISKOLC_LOCATION,
   ]);
   const [selectedCityId, setSelectedCityId] = useState(MISKOLC_LOCATION.id);
+  const [deviceLocation, setDeviceLocation] =
+    useState<WeatherLocation | null>(null);
   const [weatherByCityId, setWeatherByCityId] = useState<
     Record<string, CityWeatherState>
   >({});
@@ -124,8 +129,14 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const availableCities = useMemo(
+    () =>
+      deviceLocation ? [...savedCities, deviceLocation] : savedCities,
+    [deviceLocation, savedCities],
+  );
+
   useEffect(() => {
-    savedCities.forEach((city) => {
+    availableCities.forEach((city) => {
       if (
         !weatherByCityId[city.id] &&
         !requestControllers.current.has(city.id)
@@ -133,7 +144,7 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
         void refreshCity(city);
       }
     });
-  }, [refreshCity, savedCities, weatherByCityId]);
+  }, [availableCities, refreshCity, weatherByCityId]);
 
   const addCity = useCallback(
     (location: WeatherLocation) => {
@@ -176,12 +187,27 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
     [savedCities, selectedCityId],
   );
 
+  const updateDeviceLocation = useCallback((location: WeatherLocation) => {
+    const locationId = 'device-location';
+    requestControllers.current.get(locationId)?.abort();
+    requestControllers.current.delete(locationId);
+    setWeatherByCityId((current) => {
+      const next = { ...current };
+      delete next[locationId];
+      return next;
+    });
+    setDeviceLocation(location);
+  }, []);
+
   const selectedCity =
-    savedCities.find((city) => city.id === selectedCityId) ?? savedCities[0];
+    availableCities.find((city) => city.id === selectedCityId) ??
+    availableCities[0];
 
   const value = useMemo<WeatherContextValue>(
     () => ({
       addCity,
+      availableCities,
+      deviceLocation,
       isSaved: (locationId) =>
         savedCities.some((city) => city.id === locationId),
       refreshCity,
@@ -189,14 +215,18 @@ export function WeatherProvider({ children }: { children: ReactNode }) {
       savedCities,
       selectCity: setSelectedCityId,
       selectedCity,
+      updateDeviceLocation,
       weatherByCityId,
     }),
     [
       addCity,
+      availableCities,
+      deviceLocation,
       refreshCity,
       removeCity,
       savedCities,
       selectedCity,
+      updateDeviceLocation,
       weatherByCityId,
     ],
   );

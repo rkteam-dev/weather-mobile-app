@@ -1,4 +1,11 @@
-export type WeatherVisual = 'clear-day' | 'clear-night' | 'cloudy' | 'rain';
+export type WeatherVisual =
+  | 'clear-day'
+  | 'clear-night'
+  | 'cloudy'
+  | 'fog'
+  | 'rain'
+  | 'snow'
+  | 'storm';
 
 export type WeatherLocation = {
   country: string;
@@ -9,10 +16,20 @@ export type WeatherLocation = {
   timezone: string;
 };
 
+export type DailyForecast = {
+  condition: WeatherVisual;
+  conditionLabel: string;
+  date: string;
+  maximumTemperatureCelsius: number;
+  minimumTemperatureCelsius: number;
+  precipitationMm: number;
+};
+
 export type CurrentWeather = {
   apparentTemperatureCelsius: number;
   condition: WeatherVisual;
   conditionLabel: string;
+  dailyForecast: DailyForecast[];
   humidityPercent: number;
   isDay: boolean;
   observedAt: string;
@@ -27,16 +44,4 @@ export type CityWeatherState = {
   isLoading: boolean;
   isRefreshing: boolean;
   lastUpdatedAt: Date | null;
-};
-
-export type SavedCityWeather = {
-  condition: WeatherVisual;
-  conditionLabel: string;
-  country: string;
-  id: string;
-  isDay: boolean;
-  name: string;
-  precipitationMm: number;
-  temperatureCelsius: number;
-  timezone: string;
 };

@@ -1,5 +1,6 @@
 import type {
   CurrentWeather,
+  DailyForecast,
   WeatherLocation,
   WeatherVisual,
 } from '../../types/weather/weather';
@@ -15,6 +16,12 @@ const CURRENT_FIELDS = [
   'is_day',
   'wind_speed_10m',
 ].join(',');
+const DAILY_FIELDS = [
+  'weather_code',
+  'temperature_2m_max',
+  'temperature_2m_min',
+  'precipitation_sum',
+].join(',');
 
 type UnknownRecord = Record<string, unknown>;
 
@@ -26,6 +33,16 @@ function readNumber(record: UnknownRecord, key: string) {
   const value = record[key];
 
   if (typeof value !== 'number' || !Number.isFinite(value)) {
+    throw new Error(`Missing or invalid weather field: ${key}`);
+  }
+
+  return value;
+}
+
+function readArray(record: UnknownRecord, key: string) {
+  const value = record[key];
+
+  if (!Array.isArray(value)) {
     throw new Error(`Missing or invalid weather field: ${key}`);
   }
 
@@ -50,11 +67,12 @@ function getCondition(
     };
   }
 
-  if ([2, 3, 45, 48].includes(weatherCode)) {
-    return {
-      label: weatherCode >= 45 ? 'Ködös' : 'Felhős',
-      visual: 'cloudy',
-    };
+  if ([2, 3].includes(weatherCode)) {
+    return { label: 'Felhős', visual: 'cloudy' };
+  }
+
+  if ([45, 48].includes(weatherCode)) {
+    return { label: 'Ködös', visual: 'fog' };
   }
 
   if ([51, 53, 55, 56, 57].includes(weatherCode)) {
@@ -62,18 +80,66 @@ function getCondition(
   }
 
   if ([71, 73, 75, 77, 85, 86].includes(weatherCode)) {
-    return { label: 'Havazás', visual: 'cloudy' };
+    return { label: 'Havazás', visual: 'snow' };
   }
 
   if ([95, 96, 99].includes(weatherCode)) {
-    return { label: 'Zivatar', visual: 'rain' };
+    return { label: 'Zivatar', visual: 'storm' };
   }
 
-  return { label: 'Esős', visual: 'rain' };
+  if ([61, 63, 65, 66, 67, 80, 81, 82].includes(weatherCode)) {
+    return { label: 'Esős', visual: 'rain' };
+  }
+
+  return { label: 'Változó idő', visual: 'cloudy' };
+}
+
+function mapDailyForecast(value: UnknownRecord): DailyForecast[] {
+  const dates = readArray(value, 'time');
+  const weatherCodes = readArray(value, 'weather_code');
+  const maximumTemperatures = readArray(value, 'temperature_2m_max');
+  const minimumTemperatures = readArray(value, 'temperature_2m_min');
+  const precipitation = readArray(value, 'precipitation_sum');
+
+  return dates.map((date, index) => {
+    const weatherCode = weatherCodes[index];
+    const maximumTemperature = maximumTemperatures[index];
+    const minimumTemperature = minimumTemperatures[index];
+    const precipitationMm = precipitation[index];
+
+    if (
+      typeof date !== 'string' ||
+      typeof weatherCode !== 'number' ||
+      typeof maximumTemperature !== 'number' ||
+      typeof minimumTemperature !== 'number' ||
+      typeof precipitationMm !== 'number' ||
+      !Number.isFinite(weatherCode) ||
+      !Number.isFinite(maximumTemperature) ||
+      !Number.isFinite(minimumTemperature) ||
+      !Number.isFinite(precipitationMm)
+    ) {
+      throw new Error('The weather service returned invalid daily data.');
+    }
+
+    const condition = getCondition(weatherCode, true);
+
+    return {
+      condition: condition.visual,
+      conditionLabel: condition.label,
+      date,
+      maximumTemperatureCelsius: maximumTemperature,
+      minimumTemperatureCelsius: minimumTemperature,
+      precipitationMm,
+    };
+  });
 }
 
 function mapCurrentWeather(value: unknown): CurrentWeather {
-  if (!isRecord(value) || !isRecord(value.current)) {
+  if (
+    !isRecord(value) ||
+    !isRecord(value.current) ||
+    !isRecord(value.daily)
+  ) {
     throw new Error('The weather service returned an invalid response.');
   }
 
@@ -94,6 +160,7 @@ function mapCurrentWeather(value: unknown): CurrentWeather {
     ),
     condition: condition.visual,
     conditionLabel: condition.label,
+    dailyForecast: mapDailyForecast(value.daily),
     humidityPercent: readNumber(current, 'relative_humidity_2m'),
     isDay,
     observedAt,
@@ -109,7 +176,8 @@ export async function fetchCurrentWeather(
 ) {
   const query = new URLSearchParams({
     current: CURRENT_FIELDS,
-    forecast_days: '1',
+    daily: DAILY_FIELDS,
+    forecast_days: '7',
     latitude: String(location.latitude),
     longitude: String(location.longitude),
     timezone: location.timezone,

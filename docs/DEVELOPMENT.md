@@ -12,6 +12,8 @@
 
 The project was initialized from the official `blank-typescript@sdk-58` Expo template. NativeWind, shared UI components, Open-Meteo city search, and shared live weather state have since been added. No `android/` or `ios/` directories were generated.
 
+`expo-location` provides the approved foreground-only device location and native reverse-geocoding capability. Its permission description is configured in `app.json`. No background location capability is enabled.
+
 ## Development Commands
 
 - `npm start`: start the Expo development server.

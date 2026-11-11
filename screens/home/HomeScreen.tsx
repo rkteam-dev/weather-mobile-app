@@ -1,11 +1,15 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useColorScheme } from 'nativewind';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
+  ImageBackground,
+  type ImageSourcePropType,
   Linking,
   Modal,
   Pressable,
+  ScrollView,
+  StyleSheet,
   View,
 } from 'react-native';
 
@@ -20,8 +24,31 @@ const iconByCondition: Record<WeatherVisual, keyof typeof Ionicons.glyphMap> = {
   'clear-day': 'sunny',
   'clear-night': 'moon',
   cloudy: 'cloud',
+  fog: 'cloudy',
   rain: 'rainy',
+  snow: 'snow',
+  storm: 'thunderstorm',
 };
+
+const fallbackWeatherBackground = require('../../assets/weather/weather-cloudy.jpg');
+
+const backgroundByCondition: Partial<
+  Record<WeatherVisual, ImageSourcePropType>
+> = {
+  'clear-day': require('../../assets/weather/weather-clear-day.jpg'),
+  'clear-night': require('../../assets/weather/weather-clear-night.jpg'),
+  cloudy: fallbackWeatherBackground,
+  fog: require('../../assets/weather/weather-fog.jpg'),
+  rain: require('../../assets/weather/weather-rain.jpg'),
+  snow: require('../../assets/weather/weather-snow.jpg'),
+  storm: require('../../assets/weather/weather-storm.jpg'),
+};
+
+function getWeatherBackground(condition: WeatherVisual | undefined) {
+  return condition
+    ? (backgroundByCondition[condition] ?? fallbackWeatherBackground)
+    : fallbackWeatherBackground;
+}
 
 function formatLastUpdated(date: Date) {
   return new Intl.DateTimeFormat('hu-HU', {
@@ -30,13 +57,25 @@ function formatLastUpdated(date: Date) {
   }).format(date);
 }
 
+function formatForecastDay(date: string, index: number) {
+  if (index === 0) {
+    return 'Ma';
+  }
+
+  return new Intl.DateTimeFormat('hu-HU', { weekday: 'short' })
+    .format(new Date(`${date}T12:00:00`))
+    .replace('.', '');
+}
+
 export function HomeScreen() {
   const { colorScheme } = useColorScheme();
   const colors = getThemeColors(colorScheme);
   const [isCityPickerVisible, setIsCityPickerVisible] = useState(false);
+  const [hasBackgroundError, setHasBackgroundError] = useState(false);
   const {
+    availableCities,
+    deviceLocation,
     refreshCity,
-    savedCities,
     selectCity,
     selectedCity,
     weatherByCityId,
@@ -47,6 +86,14 @@ export function HomeScreen() {
   const isLoading = weather?.isLoading ?? true;
   const isRefreshing = weather?.isRefreshing ?? false;
   const lastUpdatedAt = weather?.lastUpdatedAt ?? null;
+
+  useEffect(() => {
+    setHasBackgroundError(false);
+  }, [data?.condition]);
+
+  const weatherBackground = hasBackgroundError
+    ? fallbackWeatherBackground
+    : getWeatherBackground(data?.condition);
 
   return (
     <AppScreen>
@@ -106,8 +153,24 @@ export function HomeScreen() {
         className='min-h-[260px] justify-between overflow-hidden'
         variant='primary'
       >
-        <View className='absolute -right-10 -top-8 h-40 w-40 rounded-full bg-white/10' />
-        <View className='absolute -bottom-14 -left-8 h-36 w-36 rounded-full bg-primary-dark/60' />
+        <ImageBackground
+          accessibilityIgnoresInvertColors
+          onError={() => setHasBackgroundError(true)}
+          resizeMode='cover'
+          source={weatherBackground}
+          style={StyleSheet.absoluteFill}
+        />
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor:
+                data?.condition === 'snow'
+                  ? 'rgba(8, 18, 38, 0.6)'
+                  : 'rgba(8, 18, 38, 0.46)',
+            },
+          ]}
+        />
 
         {isLoading ? (
           <View className='flex-1 items-center justify-center gap-4'>
@@ -185,6 +248,68 @@ export function HomeScreen() {
 
       {data ? (
         <View className='gap-5'>
+          <View className='gap-4'>
+            <AppText
+              className='text-secondary dark:text-dark-secondary'
+              variant='heading'
+            >
+              7 napos előrejelzés
+            </AppText>
+
+            <ScrollView
+              contentContainerStyle={{ gap: 12, paddingRight: 20 }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              {data.dailyForecast.map((forecast, index) => (
+                <AppCard
+                  className='w-[112px] items-center gap-3 px-3 py-4'
+                  key={forecast.date}
+                >
+                  <AppText
+                    className='text-secondary dark:text-dark-secondary'
+                    variant='bodyMedium'
+                  >
+                    {formatForecastDay(forecast.date, index)}
+                  </AppText>
+                  <Ionicons
+                    color={
+                      forecast.condition === 'clear-day'
+                        ? colors.sun
+                        : colors.primary
+                    }
+                    name={iconByCondition[forecast.condition]}
+                    size={28}
+                  />
+                  <View className='flex-row gap-1'>
+                    <AppText
+                      className='text-secondary dark:text-dark-secondary'
+                      variant='bodyMedium'
+                    >
+                      {Math.round(forecast.maximumTemperatureCelsius)}°
+                    </AppText>
+                    <AppText className='text-muted dark:text-dark-muted'>
+                      {Math.round(forecast.minimumTemperatureCelsius)}°
+                    </AppText>
+                  </View>
+                  <View className='flex-row items-center gap-1'>
+                    <Ionicons
+                      color={colors.primary}
+                      name='water-outline'
+                      size={14}
+                    />
+                    <AppText
+                      className='text-muted dark:text-dark-muted'
+                      style={{ fontSize: 12 }}
+                    >
+                      {forecast.precipitationMm} mm
+                    </AppText>
+                  </View>
+                </AppCard>
+              ))}
+            </ScrollView>
+          </View>
+
           <View className='flex-row items-center justify-between gap-4'>
             <AppText
               className='text-secondary dark:text-dark-secondary'
@@ -311,8 +436,9 @@ export function HomeScreen() {
             </View>
 
             <View className='gap-2'>
-              {savedCities.map((city) => {
+              {availableCities.map((city) => {
                 const isSelected = city.id === selectedCity.id;
+                const isDeviceLocation = city.id === deviceLocation?.id;
                 return (
                   <Pressable
                     accessibilityRole='button'
@@ -329,7 +455,7 @@ export function HomeScreen() {
                   >
                     <Ionicons
                       color={colors.primary}
-                      name='location'
+                      name={isDeviceLocation ? 'navigate' : 'location'}
                       size={21}
                     />
                     <View className='flex-1'>
@@ -344,6 +470,7 @@ export function HomeScreen() {
                         style={{ fontSize: 13 }}
                       >
                         {city.country}
+                        {isDeviceLocation ? ' · Saját helyzet' : ''}
                       </AppText>
                     </View>
                     {isSelected ? (

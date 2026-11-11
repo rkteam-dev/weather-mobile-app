@@ -2,7 +2,7 @@
 
 ## Status
 
-This document records the approved product constraints. Live city search, in-memory management of up to three cities, selected-city switching, and current weather are implemented. Persistence is not.
+This document records the approved product constraints. Live city search, three manual cities, one device-derived location, selected-location switching, current weather, and a seven-day forecast are implemented. Persistence is not.
 
 ## Product Goal
 
@@ -21,6 +21,8 @@ The first implementation should:
 - Show deliberate initial loading, refreshing, incomplete data, network error, retry, and successful states.
 - Allow manual refresh.
 - Show the time of the last successful update.
+- Show a horizontally scrollable seven-day forecast.
+- Add or refresh one foreground device location after an explicit button press and system permission.
 
 The initial interface should remain focused and minimal.
 
@@ -30,7 +32,7 @@ The initial implementation must not include:
 
 - Authentication or user accounts
 - Notifications
-- GPS or location permissions
+- Background location tracking
 - Databases
 - Persistent favorites
 - A custom backend
@@ -41,7 +43,7 @@ The initial implementation must not include:
 
 These capabilities may be considered only in a later explicitly authorized task.
 
-The interface manages up to three manually selected cities without GPS. The Home screen uses the selected saved city's shared live weather. Saved cities and selection remain in memory until persistence is explicitly implemented.
+The interface manages up to three manually selected cities plus one system-managed device location. The device location is obtained only after an explicit button press, is not tracked in the background, and cannot be manually edited or deleted. The Home screen uses the selected location's shared live weather and forecast. Locations and selection remain in memory until persistence is explicitly implemented.
 
 ## Data Source
 

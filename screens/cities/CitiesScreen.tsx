@@ -18,6 +18,7 @@ import {
   MAX_SAVED_CITIES,
   useWeather,
 } from '../../context/weather/WeatherContext';
+import { getDeviceWeatherLocation } from '../../services/location/deviceLocation';
 import { searchWeatherLocations } from '../../services/weather/openMeteo';
 import type {
   CityWeatherState,
@@ -29,7 +30,10 @@ const iconByCondition: Record<WeatherVisual, keyof typeof Ionicons.glyphMap> = {
   'clear-day': 'sunny',
   'clear-night': 'moon',
   cloudy: 'cloud',
+  fog: 'cloudy',
   rain: 'rainy',
+  snow: 'snow',
+  storm: 'thunderstorm',
 };
 
 type NoticeState = {
@@ -41,6 +45,7 @@ type NoticeState = {
 type CityCardProps = {
   city: WeatherLocation;
   currentTime: Date;
+  isDeviceLocation: boolean;
   isOnlyCity: boolean;
   onDelete: (city: WeatherLocation) => void;
   onRefresh: (city: WeatherLocation) => void;
@@ -58,6 +63,7 @@ function formatCityTime(date: Date, timezone: string) {
 function CityCard({
   city,
   currentTime,
+  isDeviceLocation,
   isOnlyCity,
   onDelete,
   onRefresh,
@@ -96,22 +102,29 @@ function CityCard({
             style={{ fontSize: 13, lineHeight: 19 }}
           >
             {city.country} · {formatCityTime(currentTime, city.timezone)}
+            {isDeviceLocation ? ' · Saját helyzet' : ''}
           </AppText>
         </View>
 
-        <Pressable
-          accessibilityLabel={`${city.name} törlése`}
-          accessibilityRole='button'
-          className='h-11 w-11 items-center justify-center rounded-control bg-danger-soft dark:bg-dark-danger-soft'
-          hitSlop={8}
-          onPress={() => onDelete(city)}
-        >
-          <Ionicons
-            color={isOnlyCity ? colors.muted : colors.danger}
-            name='trash-outline'
-            size={20}
-          />
-        </Pressable>
+        {isDeviceLocation ? (
+          <View className='h-11 w-11 items-center justify-center rounded-control bg-primary-soft dark:bg-dark-primary-soft'>
+            <Ionicons color={colors.primary} name='navigate' size={20} />
+          </View>
+        ) : (
+          <Pressable
+            accessibilityLabel={`${city.name} törlése`}
+            accessibilityRole='button'
+            className='h-11 w-11 items-center justify-center rounded-control bg-danger-soft dark:bg-dark-danger-soft'
+            hitSlop={8}
+            onPress={() => onDelete(city)}
+          >
+            <Ionicons
+              color={isOnlyCity ? colors.muted : colors.danger}
+              name='trash-outline'
+              size={20}
+            />
+          </Pressable>
+        )}
       </View>
 
       {data ? (
@@ -219,14 +232,17 @@ export function CitiesScreen() {
   const colors = getThemeColors(colorScheme);
   const {
     addCity,
+    deviceLocation,
     isSaved,
     refreshCity,
     removeCity,
     savedCities,
+    updateDeviceLocation,
     weatherByCityId,
   } = useWeather();
   const [currentTime, setCurrentTime] = useState(() => new Date());
   const [isSearching, setIsSearching] = useState(false);
+  const [isLocating, setIsLocating] = useState(false);
   const [notice, setNotice] = useState<NoticeState | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [searchResults, setSearchResults] = useState<WeatherLocation[]>([]);
@@ -320,6 +336,57 @@ export function CitiesScreen() {
     removeCity(city.id);
   }
 
+  async function handleDeviceLocation() {
+    if (isLocating) {
+      return;
+    }
+
+    setIsLocating(true);
+
+    try {
+      const result = await getDeviceWeatherLocation();
+
+      if (result.status === 'success') {
+        updateDeviceLocation(result.location);
+        setNotice({
+          description: `${result.location.name} hozzáadva saját helyzetként. A kezdőlapi városválasztóból kiválaszthatod.`,
+          title: 'Helyzet azonosítva',
+          variant: 'info',
+        });
+        return;
+      }
+
+      if (result.status === 'permission-denied') {
+        setNotice({
+          description:
+            'A saját helyzet használatához engedélyezd a helyhozzáférést az alkalmazás beállításaiban.',
+          title: 'Nincs helyengedély',
+          variant: 'warning',
+        });
+        return;
+      }
+
+      if (result.status === 'services-disabled') {
+        setNotice({
+          description:
+            'Kapcsold be a helymeghatározást a készüléken, majd próbáld újra.',
+          title: 'A GPS ki van kapcsolva',
+          variant: 'warning',
+        });
+        return;
+      }
+
+      setNotice({
+        description:
+          'Most nem sikerült meghatározni a várost. Menj nyitottabb helyre, majd próbáld újra.',
+        title: 'A helyzet nem érhető el',
+        variant: 'error',
+      });
+    } finally {
+      setIsLocating(false);
+    }
+  }
+
   return (
     <AppScreen>
       <View className='gap-3'>
@@ -336,11 +403,47 @@ export function CitiesScreen() {
           Mentett városok
         </AppText>
         <AppText className='text-muted dark:text-dark-muted'>
-          Keress és ments el legfeljebb három várost, GPS használata nélkül.
+          Ments el legfeljebb három várost, vagy add hozzá külön a saját
+          helyzetedet.
         </AppText>
       </View>
 
       <View className='gap-5'>
+        <Pressable
+          accessibilityLabel='Saját helyzet meghatározása GPS alapján'
+          accessibilityRole='button'
+          className='min-h-16 flex-row items-center gap-4 rounded-card border border-primary bg-primary-soft p-inner dark:border-dark-primary dark:bg-dark-primary-soft'
+          disabled={isLocating}
+          onPress={() => void handleDeviceLocation()}
+        >
+          <View className='h-12 w-12 items-center justify-center rounded-control bg-primary dark:bg-dark-primary-dark'>
+            {isLocating ? (
+              <ActivityIndicator color='#FFFFFF' />
+            ) : (
+              <Ionicons color='#FFFFFF' name='navigate' size={23} />
+            )}
+          </View>
+          <View className='flex-1 gap-1'>
+            <AppText
+              className='text-secondary dark:text-dark-secondary'
+              variant='bodyMedium'
+            >
+              {deviceLocation
+                ? 'Saját helyzet frissítése'
+                : 'Saját helyzet használata'}
+            </AppText>
+            <AppText
+              className='text-muted dark:text-dark-muted'
+              style={{ fontSize: 13 }}
+            >
+              {deviceLocation
+                ? `Jelenleg: ${deviceLocation.name}`
+                : 'Egyszeri helyengedéllyel azonosítjuk a városodat.'}
+            </AppText>
+          </View>
+          <Ionicons color={colors.primary} name='chevron-forward' size={20} />
+        </Pressable>
+
         <View className='min-h-12 flex-row items-center gap-3 rounded-control border border-border bg-surface px-4 dark:border-dark-border dark:bg-dark-surface'>
           <Ionicons color={colors.muted} name='search' size={20} />
           <TextInput
@@ -438,6 +541,7 @@ export function CitiesScreen() {
             <CityCard
               city={city}
               currentTime={currentTime}
+              isDeviceLocation={false}
               isOnlyCity={savedCities.length === 1}
               key={city.id}
               onDelete={handleDeleteCity}
@@ -445,6 +549,18 @@ export function CitiesScreen() {
               weather={weatherByCityId[city.id]}
             />
           ))}
+
+          {deviceLocation ? (
+            <CityCard
+              city={deviceLocation}
+              currentTime={currentTime}
+              isDeviceLocation
+              isOnlyCity={false}
+              onDelete={() => undefined}
+              onRefresh={(location) => void refreshCity(location)}
+              weather={weatherByCityId[deviceLocation.id]}
+            />
+          ) : null}
         </View>
 
         <Pressable

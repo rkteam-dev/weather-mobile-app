@@ -2,7 +2,7 @@
 
 ## Status
 
-The repository contains a minimal Expo entry point, Home, Cities, and Settings screens, bottom-tab navigation, shared UI contracts, live city search, and shared current-weather state for up to three cities.
+The repository contains a minimal Expo entry point, Home, Cities, and Settings screens, bottom-tab navigation, shared UI contracts, live city search, one-time device location, and shared current-weather plus seven-day forecast state.
 
 ## Architectural Goals
 
@@ -26,11 +26,11 @@ Global components should not contain weather-specific knowledge.
 
 ### Home Feature
 
-`screens/home/HomeScreen.tsx` presents live current weather for the selected saved city. Its modal selector switches between the cities held by shared weather state and reuses their already loaded values. It renders loading, error, retry, refresh, success, and stale-data states. Screen-specific copy remains directly in the screen for readability.
+`screens/home/HomeScreen.tsx` presents live current weather and a horizontal seven-day forecast for the selected location. The hero selects a bundled background for clear day, clear night, cloud, fog, rain, snow, or storm conditions and falls back to the cloudy image when an image or mapping is unavailable. Its modal selector switches between three manually saved cities and the optional device-derived location while reusing already loaded values. It renders loading, error, retry, refresh, success, and stale-data states. Screen-specific copy remains directly in the screen for readability.
 
 ### Weather Data
 
-`services/weather/openMeteo.ts` owns Open-Meteo geocoding and current-weather requests, runtime response validation, WMO condition mapping, and conversion into application models. `context/weather/WeatherContext.tsx` owns saved locations, Home selection, shared weather values, request cancellation, timeout, retry, refresh, and last successful update time. Presentational components do not call the API directly.
+`services/weather/openMeteo.ts` owns Open-Meteo geocoding, current-weather, and daily-forecast requests, runtime response validation, WMO condition mapping, and conversion into application models. `services/location/deviceLocation.ts` owns foreground permission, one-time positioning, and native reverse geocoding. `context/weather/WeatherContext.tsx` owns saved locations, the optional device location, Home selection, shared weather values, request cancellation, timeout, retry, refresh, and last successful update time. Presentational components do not call external services directly.
 
 ### Navigation
 
@@ -38,7 +38,7 @@ Global components should not contain weather-specific knowledge.
 
 ### Cities Screen
 
-`screens/cities/CitiesScreen.tsx` searches Open-Meteo locations and manages up to three cities in memory. Cards show live temperature, condition, precipitation, day/night state, timezone-based local time, retry, and manual refresh. The last remaining city cannot be deleted because Home always requires a selected city.
+`screens/cities/CitiesScreen.tsx` searches Open-Meteo locations and manages up to three manual cities in memory. A separate button requests foreground location access and adds or refreshes one system-managed device location as a fourth entry. Cards show live temperature, condition, precipitation, day/night state, timezone-based local time, retry, and manual refresh. The device location cannot be manually edited or deleted.
 
 `types/weather/weather.ts` defines the small application-facing location and weather models. Open-Meteo transport responses are validated and mapped into these models instead of being passed directly to the UI.
 

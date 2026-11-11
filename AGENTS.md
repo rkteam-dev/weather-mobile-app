@@ -119,8 +119,9 @@
 - Map external data into typed application models and handle missing or unexpected values safely.
 - Implement explicit errors and request timeout or cancellation where appropriate.
 - Avoid duplicate requests and do not add a caching library initially.
-- Do not add authentication, accounts, notifications, GPS permissions, databases, or a custom backend unless explicitly requested.
-- Saved cities are manually selected without GPS and are limited to three. Persistence and live search remain deferred until explicitly requested.
+- Do not add authentication, accounts, notifications, databases, background location tracking, or a custom backend unless explicitly requested.
+- Saved cities are limited to three manually selected locations plus one device-derived location. Device location is requested only through an explicit user action, remains system-managed, and must not be manually edited or deleted.
+- Current weather and a seven-day daily forecast use Open-Meteo. Persistence remains deferred until explicitly requested.
 - When theme or favorite-city persistence is requested, use a React Native-compatible storage solution rather than browser `localStorage`, and obtain approval before adding its dependency.
 - Review API usage limits, licensing, attribution, and requirements before implementation.
 

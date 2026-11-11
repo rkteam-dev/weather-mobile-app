@@ -52,6 +52,10 @@ Every new or modified interface element must be reviewed in both light and dark 
 
 When persistence is implemented, use a React Native-compatible storage API instead of browser `localStorage`.
 
+## Weather Hero Images
+
+The Home weather hero uses bundled JPEG images from `assets/weather/` with `cover` scaling. A dark overlay keeps white content readable in both themes; snow uses a stronger overlay because of its higher brightness. The cloudy image is the fallback for an unknown condition or image loading failure. Do not place text, logos, or essential edge details inside these source images.
+
 ## Typography
 
 Inter is loaded at runtime through Expo Font so it remains compatible with Expo Go. The application currently loads Regular 400, Medium 500, SemiBold 600, and Bold 700 only. Use `AppText` rather than raw `Text` for application copy so the correct family, size, and line height are applied consistently.

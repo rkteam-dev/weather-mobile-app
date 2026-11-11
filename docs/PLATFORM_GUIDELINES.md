@@ -54,10 +54,12 @@ These are implementation requirements for the initialized Android and iOS applic
 - Testing with Expo Go first.
 - Using an Android Studio emulator for layout and interaction checks.
 - Do not run expo, or android emulator, only the developer can do it manually, you can tell him to do it for testing.
+- Foreground location requires the system location permission and enabled location services. Emulator testing requires a configured simulated location.
 
 ### iOS
 
 - Later
+- Foreground location maps to the iOS When In Use permission. The permission copy is configured through the Expo Location config plugin for standalone builds.
 
 ## Reporting Platform Differences
 

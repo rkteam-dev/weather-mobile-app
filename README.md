@@ -6,7 +6,10 @@ A small cross-platform weather application built as a React Native reference pro
 
 - Search cities through the Open-Meteo Geocoding API
 - Save up to three cities without GPS access
+- Add one separate device location through an explicit foreground permission request
 - Display live temperature, apparent temperature, humidity, wind, precipitation, weather condition, and day/night state
+- Browse a horizontally scrollable seven-day forecast
+- Show a weather-specific hero background with a safe cloudy fallback
 - Select which saved city appears on the Home screen
 - Refresh weather data manually
 - Handle loading, timeout, network error, retry, and stale-data states
@@ -24,6 +27,7 @@ Saved cities, the selected city, and the chosen theme currently remain in memory
 - NativeWind 4 and Tailwind CSS 3
 - React Navigation 7
 - Inter font and Ionicons
+- Expo Location for one-time foreground positioning and reverse geocoding
 - Native `fetch`
 - Open-Meteo Geocoding and Forecast APIs
 
@@ -85,7 +89,7 @@ See [Weather API documentation](docs/WEATHER_API.md) for request fields, mapping
 
 - Saved cities and theme selection are not persisted
 - Settings actions are visual placeholders
-- GPS-based location is not implemented
+- Device location is not tracked in the background and must be refreshed manually
 - Automated tests have not been introduced yet
 - Android has been manually exercised, while iOS runtime testing is still pending
 
